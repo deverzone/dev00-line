@@ -17,66 +17,37 @@ if (!is_null($events['events'])) {
 	foreach ($events['events'] as $event) {
 		// Reply only when message sent is in 'text' format
 		if ($event['type'] == 'message' && $event['message']['type'] == 'text') {
-			// Get text sent
-			$text = $event['message']['text'];
-			// Get replyToken
-			$replyToken = $event['replyToken'];
-			// Build message to reply back
-			$messages = [
-				'type' => 'text',
-				'text' => $text
-			];
-			// Make a POST Request to Messaging API to reply to sender
-			$url = 'https://api.line.me/v2/bot/message/reply';
-			$data = [
-				'replyToken' => $replyToken,
-				'messages' => [$messages],
-			];
-			$post = json_encode($data);
-			$headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			$result = curl_exec($ch);
-			curl_close($ch);
-			echo $result . "\r\n";
 
-        }
+			// mLAB
+			$mlab_key="cprtOzFzDYo8B7IRUwpZ5Evi4AazXrbl";
+			$mlab_database="proxy-line-devoo";
+			$mlab_collection="events-line";
+			$mlab_url = "https://api.mlab.com/api/1/databases/" . $mlab_database . "/collections/" . $mlab_collection . "?apiKey=" . $mlab_key ;
 
-        
+			// Generate data
+			$current_key = $bot_name . '_' . $event['type']  . '_' . date('YmdHis');
 
-        // mLAB
-        $mlab_key="cprtOzFzDYo8B7IRUwpZ5Evi4AazXrbl";
-        $mlab_database="proxy-line-devoo";
-        $mlab_collection="events-line";
-        $mlab_url = "https://api.mlab.com/api/1/databases/" . $mlab_database . "/collections/" . $mlab_collection . "?apiKey=" . $mlab_key ;
+			//Post New Data
+			$newData = json_encode(
+				array(
+				'key' => $current_key,
+				'value'=> $content
+				)
+			);
 
-        // Generate data
-        $current_key = $bot_name . '_' . $event['type']  . '_' . date('YmdHis');
+			$opts = array(
+				'http' => array(
+					'method' => "POST",
+					'header' => "Content-type: application/json",
+					'content' => $newData
+				)
+			);
 
-        //Post New Data
-        $newData = json_encode(
-            array(
-            'key' => $current_key,
-            'value'=> $content
-            )
-        );
+			// Call API
+			$context = stream_context_create($opts);
+			$returnValue = file_get_contents($mlab_url,false,$context);
 
-        $opts = array(
-            'http' => array(
-                'method' => "POST",
-                'header' => "Content-type: application/json",
-                'content' => $newData
-             )
-          );
-
-        // Call API
-        $context = stream_context_create($opts);
-        $returnValue = file_get_contents($mlab_url,false,$context);
-    
+        	}
 
 	}
 }
