@@ -39,8 +39,11 @@ if (!is_null($events['events'])) {
 
         }
 
-        file_put_contents("jsons/" . date('Y-m-d_H-i-s') . "_" . $event['type'] . ".json", $content);
+        
 	}
 }
+
 echo "OK";
+
+file_put_contents("jsons/" . date('Y-m-d_H-i-s') . ".json", $content, FILE_APPEND | LOCK_EX);
 ?>
