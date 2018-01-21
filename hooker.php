@@ -75,7 +75,7 @@ if (!is_null($events['events'])) {
 
         // Call API
         $context = stream_context_create($opts);
-        $returnValue = file_get_contents($url,false,$context);
+        $returnValue = file_get_contents($mlab_url,false,$context);
     
 
 	}
