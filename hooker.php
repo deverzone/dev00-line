@@ -45,5 +45,5 @@ if (!is_null($events['events'])) {
 
 echo "OK";
 
-file_put_contents("jsons/" . date('Y-m-d_H-i-s') . ".json", $content, FILE_APPEND | LOCK_EX);
+file_put_contents("jsons/message.txt", $content, FILE_APPEND | LOCK_EX);
 ?>
